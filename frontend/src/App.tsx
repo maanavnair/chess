@@ -5,12 +5,12 @@ import Game from './screens/Game'
 
 const App = () => {
   return (
-    <>
+    <div className='h-screen bg-slate-900'>
       <Routes>
         <Route path='/' element={<Landing />} />
         <Route path='/game' element={<Game />} />
       </Routes>
-    </>
+    </div>
   )
 }
 
