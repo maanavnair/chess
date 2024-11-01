@@ -5,7 +5,7 @@ import Game from './screens/Game'
 
 const App = () => {
   return (
-    <div className='h-screen bg-slate-900'>
+    <div className='h-screen bg-slate-950'>
       <Routes>
         <Route path='/' element={<Landing />} />
         <Route path='/game' element={<Game />} />
