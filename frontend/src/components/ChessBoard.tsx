@@ -20,22 +20,23 @@ const ChessBoard = ({ board, socket }: {
             {board.map((row, i) => {
                 return <div key={i} className="flex">
                     {row.map((square, j) => {
+                        const squareRepresentation = String.fromCharCode(65 + (j % 8)) + "" + (8 - i) as Square;
                         return <div onClick={() => {
                             if (!from) {
-                                setFrom(square?.square ? square.square : null);
+                                setFrom(squareRepresentation);
                             }
                             else {
                                 socket.send(JSON.stringify({
                                     type: MOVE,
                                     payload: {
                                         from,
-                                        to: square?.square
+                                        to: squareRepresentation
                                     }
                                 }))
                                 setFrom(null);
                                 console.log({
                                     from,
-                                    to
+                                    to: squareRepresentation
                                 })
                             }
                         }} key={j} className={`text-black w-16 h-16 ${(i + j) % 2 == 0 ? 'bg-green-500' :
