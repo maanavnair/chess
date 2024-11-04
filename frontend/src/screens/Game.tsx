@@ -13,6 +13,7 @@ const Game = () => {
     const [chess, setChess] = useState(new Chess());
     const [board, setBoard] = useState(chess.board());
     const [playerColor, setPlayerColor] = useState<'white' | 'black' | null>(null);
+    const [started, setStarted] = useState(false);
 
     useEffect(() => {
         if (!socket) {
@@ -25,6 +26,7 @@ const Game = () => {
                 case INIT_GAME:
                     setBoard(chess.board());
                     setPlayerColor(message.payload.color);
+                    setStarted(true);
                     console.log("Game initialised")
                     break;
                 case MOVE:
@@ -35,6 +37,7 @@ const Game = () => {
                     break;
                 case GAME_OVER:
                     console.log("Game Over");
+                    console.log(message.payload.winner);
                     break;
             }
         }
@@ -51,7 +54,7 @@ const Game = () => {
                     </div>
                     <div className="col-span-2 bg-slate-900 w-full flex justify-center">
                         <div className="pt-8">
-                            <button
+                            {!started && <button
                                 className="px-8 py-4 bg-green-500 hover:bg-green-700 text-white font-bold rounded"
                                 onClick={() => {
                                     socket.send(JSON.stringify({
@@ -60,7 +63,7 @@ const Game = () => {
                                 }}
                             >
                                 Play
-                            </button>
+                            </button>}
                         </div>
                     </div>
                 </div>
