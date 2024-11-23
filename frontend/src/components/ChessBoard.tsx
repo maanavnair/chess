@@ -86,7 +86,7 @@ const ChessBoard = ({ chess, board, socket, setBoard, playerColor }: {
                             >
                                 <div className="flex justify-center h-full w-full">
                                     <div className="h-full justify-center flex flex-col">
-                                        {square ? square.type : ""}
+                                        {square ? <img className="w-8" src={`/${square?.color === "b" ? square?.type : `${square?.type?.toUpperCase()} copy`}.png`} /> : null}
                                     </div>
                                 </div>
                             </div>
