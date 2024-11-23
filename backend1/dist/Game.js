@@ -63,6 +63,7 @@ class Game {
                 payload: move
             }));
         }
+        console.log(this.board.fen());
         this.moveCount++;
     }
 }
