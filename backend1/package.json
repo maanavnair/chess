@@ -11,6 +11,10 @@
   "dependencies": {
     "@types/ws": "^8.5.12",
     "chess.js": "^1.0.0-beta.8",
+    "express": "^4.21.1",
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0"
   }
 }
