@@ -4,10 +4,16 @@ import express from "express";
 import http from "http";
 import dotenv from "dotenv";
 import mongoose from 'mongoose';
+import cors from "cors"
+import cookieParser from "cookie-parser";
+import { router as authRoutes } from './routes/userRoutes';
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/api/auth', authRoutes);
 
 const server = http.createServer(app);
 
