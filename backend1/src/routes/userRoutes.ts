@@ -7,6 +7,6 @@ router
     .post('/signup', signup)
     .post('/login', login)
     .post('/logout', logout)
-    .get('user', userProfile)
+    .get('/user', userProfile)
 
 export { router };
