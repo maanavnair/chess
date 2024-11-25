@@ -32,7 +32,7 @@ const Login = () => {
             navigate('/game');
         }
         catch (error) {
-            toast.error("An error occured");
+            toast.error("Incorrect credentials");
         }
     }
 

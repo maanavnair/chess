@@ -13,6 +13,7 @@ const signup = async (req: Request, res: Response) => {
         const user = await User.findOne({ email });
         if (user) {
             res.status(400).json({ error: 'Email already in use' });
+            return;
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -57,6 +58,7 @@ const login = async (req: Request, res: Response) => {
 
         if (!email || !isPasswordCorrect) {
             res.status(400).json({ error: "Invalid email or password" });
+            return;
         }
 
         generateTokenAndSetCookie(user._id.toString(), res);

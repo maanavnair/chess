@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
+import toast from 'react-hot-toast';
 
 
 const Signup = () => {
@@ -9,10 +11,41 @@ const Signup = () => {
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [confirm, setConfirm] = useState("");
+    const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (password.length < 6) {
+            toast.error("Password length must be more than 6 characters");
+            return;
+        }
+        if (name === "" || username === "" || email === "" || password === "") {
+            toast.error("All fields must be filled");
+            return;
+        }
+        if (password != confirm) {
+            toast.error("Confirm Password must be equal to Password");
+            return;
+        }
+        try {
+            const res = await fetch('http://localhost:8080/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ name, username, email, password })
+            })
+            const data = await res.json();
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            await setUser(data);
+            navigate('/');
+        }
+        catch (error) {
+            toast.error("Incorrect credentials");
+        }
+
     }
 
     return (
