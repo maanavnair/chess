@@ -1,15 +1,39 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import toast from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
 
 
 const Login = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (email === "" || password === "") {
+            toast.error("All fields must be filled");
+            return;
+        }
+        try {
+            const res = await fetch("http://localhost:8080/api/auth/login", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            await setUser(data);
+            navigate('/game');
+        }
+        catch (error) {
+            toast.error("An error occured");
+        }
     }
 
     return (

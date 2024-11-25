@@ -108,8 +108,8 @@ const userProfile = async (req: Request, res: Response) => {
             res.status(404).json({ error: 'User Not Found' });
             return;
         }
-        const { username, email, _id } = user;
-        const userProfile = { username, email, _id, token }
+        const { username, email, _id, name } = user;
+        const userProfile = { username, email, _id, name }
         res.status(201).json({ userProfile })
 
     }

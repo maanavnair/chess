@@ -23,7 +23,7 @@ const Landing = () => {
                         <div className="mt-8 flex justify-center">
                             <button
                                 className="px-8 py-4 bg-green-500 hover:bg-green-700 text-white font-bold rounded"
-                                onClick={() => navigate('/game')}
+                                onClick={() => navigate('/login')}
                             >
                                 Play Online
                             </button>
