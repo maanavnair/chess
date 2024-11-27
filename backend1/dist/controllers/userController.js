@@ -25,6 +25,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield User_1.User.findOne({ email });
         if (user) {
             res.status(400).json({ error: 'Email already in use' });
+            return;
         }
         const salt = yield bcrypt_1.default.genSalt(10);
         const hashedPassword = yield bcrypt_1.default.hash(password, salt);
@@ -65,6 +66,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const isPasswordCorrect = yield bcrypt_1.default.compare(password, user.password);
         if (!email || !isPasswordCorrect) {
             res.status(400).json({ error: "Invalid email or password" });
+            return;
         }
         (0, generateTokenAndSetCookie_1.generateTokenAndSetCookie)(user._id.toString(), res);
         res.status(200).json({
@@ -108,8 +110,8 @@ const userProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             res.status(404).json({ error: 'User Not Found' });
             return;
         }
-        const { username, email, _id } = user;
-        const userProfile = { username, email, _id, token };
+        const { username, email, _id, name } = user;
+        const userProfile = { username, email, _id, name };
         res.status(201).json({ userProfile });
     }
     catch (error) {
