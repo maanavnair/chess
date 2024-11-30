@@ -61,7 +61,7 @@ wss.on('connection', async function connection(ws, req) {
             return;
         }
 
-        gameManager.addUser(ws);
+        gameManager.addUser(ws, user._id.toString());
 
         ws.on('close', () => {
             console.log('User disconnected');
