@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import ChessBoard from "../components/ChessBoard"
 import { useSocket } from "../hooks/useSocket"
 import { Chess } from "chess.js"
+import toast from "react-hot-toast"
 
 export const INIT_GAME = "init_game"
 export const MOVE = "move"
@@ -26,6 +27,7 @@ const Game = () => {
                 case INIT_GAME:
                     setBoard(chess.board());
                     setPlayerColor(message.payload.color);
+                    toast.success(`You're playing as ${message.payload.color}`);
                     setStarted(true);
                     console.log("Game initialised")
                     break;
@@ -38,6 +40,13 @@ const Game = () => {
                 case GAME_OVER:
                     console.log("Game Over");
                     console.log(message.payload.winner);
+                    console.log(playerColor)
+                    if (playerColor === message.payload.winner) {
+                        toast.success("You Won!!");
+                    }
+                    else {
+                        toast.error("You lost");
+                    }
                     break;
             }
         }
