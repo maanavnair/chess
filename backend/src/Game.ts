@@ -21,20 +21,6 @@ export class Game {
         this.player2Id = player2Id;
         this.board = new Chess();
         this.startTime = new Date();
-
-        this.player1.send(JSON.stringify({
-            type: INIT_GAME,
-            payload: {
-                color: "white"
-            }
-        }));
-
-        this.player2.send(JSON.stringify({
-            type: INIT_GAME,
-            payload: {
-                color: "black"
-            }
-        }));
     }
 
     async makeMove(socket: WebSocket, move: {
@@ -116,6 +102,26 @@ export class Game {
 
     public setGameId(gameId: string) {
         this.gameId = gameId;
+    }
+
+    public sendInitMessage(gameId: string) {
+        this.player1.send(JSON.stringify({
+            type: INIT_GAME,
+            payload: {
+                color: "white",
+                gameId: gameId,
+                fen: this.board.fen(),
+            }
+        }));
+
+        this.player2.send(JSON.stringify({
+            type: INIT_GAME,
+            payload: {
+                color: "black",
+                gameId: gameId,
+                fen: this.board.fen(),
+            }
+        }));
     }
 
     public async updateGameInDatabase() {

@@ -41,6 +41,7 @@ export class GameManager {
                     try {
                         const savedGame = await game.saveToDatabase();
                         game.setGameId(savedGame._id.toString());
+                        game.sendInitMessage(savedGame._id.toString());
                         this.games.push(game);
                     }
                     catch (error) {

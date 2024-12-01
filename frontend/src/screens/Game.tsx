@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import ChessBoard from "../components/ChessBoard"
 import { useSocket } from "../hooks/useSocket"
 import { Chess } from "chess.js"
 import toast from "react-hot-toast"
+import { GameContext } from "../context/GameContext"
 
 export const INIT_GAME = "init_game"
 export const MOVE = "move"
@@ -11,6 +12,7 @@ export const GAME_OVER = "game_over"
 const Game = () => {
 
     const socket = useSocket();
+    const { game, setGame } = useContext(GameContext);
     const [chess, setChess] = useState(new Chess());
     const [board, setBoard] = useState(chess.board());
     const [playerColor, setPlayerColor] = useState<'white' | 'black' | null>(null);
@@ -29,6 +31,10 @@ const Game = () => {
                     setPlayerColor(message.payload.color);
                     toast.success(`You're playing as ${message.payload.color}`);
                     setStarted(true);
+                    setGame({
+                        _id: message.payload._id,
+                        fen: message.payload.fen,
+                    })
                     console.log("Game initialised")
                     break;
                 case MOVE:
