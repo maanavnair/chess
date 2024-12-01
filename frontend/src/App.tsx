@@ -7,6 +7,7 @@ import Signup from './screens/Signup'
 import { Toaster } from 'react-hot-toast'
 import { useContext, useEffect } from 'react'
 import { UserContext } from './context/UserContext'
+import ChessGame from './screens/ChessGame'
 
 const App = () => {
 
@@ -47,10 +48,11 @@ const App = () => {
   return (
     <div className='h-screen bg-slate-950'>
       <Routes>
-        <Route path='/' element={user ? <Navigate to='/game' /> : <Landing />} />
+        <Route path='/' element={user ? <Navigate to='/match' /> : <Landing />} />
         <Route path='/game' element={user ? <Game /> : <Navigate to='/login' />} />
-        <Route path='/signup' element={user ? <Navigate to='/game' /> : <Signup />} />
-        <Route path='/login' element={user ? <Navigate to='/game' /> : <Login />} />
+        <Route path='/signup' element={user ? <Navigate to='/match' /> : <Signup />} />
+        <Route path='/login' element={user ? <Navigate to='/match' /> : <Login />} />
+        <Route path='/match' element={user ? <ChessGame /> : <Navigate to='/login' />} />
       </Routes>
       <Toaster />
     </div>

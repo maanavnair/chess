@@ -1,9 +1,15 @@
 import { createContext, ReactNode, useState } from "react";
 
-
 interface Game {
     _id: string,
     fen: string,
+    // chess: any,
+    // board: ({
+    //     square: Square;
+    //     type: PieceSymbol;
+    //     color: Color;
+    // } | null)[][]
+
 }
 
 interface GameContextType {

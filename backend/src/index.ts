@@ -9,6 +9,7 @@ import cors from "cors";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import { router as authRoutes } from './routes/userRoutes';
+import { router as gameRoutes } from './routes/gameRoutes';
 import { User } from './models/User';
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(cors({
     credentials: true,
 }));
 app.use('/api/auth', authRoutes);
+app.use('/api/game', gameRoutes);
 
 const server = http.createServer(app);
 

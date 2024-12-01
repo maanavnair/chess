@@ -16,27 +16,62 @@ const Game = () => {
     const [chess, setChess] = useState(new Chess());
     const [board, setBoard] = useState(chess.board());
     const [playerColor, setPlayerColor] = useState<'white' | 'black' | null>(null);
-    const [started, setStarted] = useState(false);
+    // const [started, setStarted] = useState(false);
+
+    const fetchGame = async () => {
+        const gameIdString = localStorage.getItem("game_id");
+        const storedGameId = gameIdString ? JSON.parse(gameIdString) : null;
+
+        if (!game && storedGameId) {
+            try {
+                const res = await fetch('http://localhost:8080/api/game', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(storedGameId),
+                });
+                const data = await res.json();
+                setGame(data);
+                console.log("hjbsdhjkf", data);
+            }
+            catch (error) {
+                console.log("Error fetching game: ", error);
+            }
+        }
+        if (game) {
+            const updatedChess = new Chess(game.fen);
+            setChess(updatedChess);
+            setBoard(updatedChess.board());
+        }
+    }
+
+    // useEffect(() => {
+    //     fetchGame();
+    // }, [])
 
     useEffect(() => {
         if (!socket) {
             return;
         }
+
         socket.onmessage = (event) => {
             const message = JSON.parse(event.data);
             console.log(message);
             switch (message.type) {
-                case INIT_GAME:
-                    setBoard(chess.board());
-                    setPlayerColor(message.payload.color);
-                    toast.success(`You're playing as ${message.payload.color}`);
-                    setStarted(true);
-                    setGame({
-                        _id: message.payload._id,
-                        fen: message.payload.fen,
-                    })
-                    console.log("Game initialised")
-                    break;
+                // case INIT_GAME:
+                //     setBoard(chess.board());
+                //     setPlayerColor(message.payload.color);
+                //     toast.success(`You're playing as ${message.payload.color}`);
+                //     setGame({
+                //         _id: message.payload._id,
+                //         fen: message.payload.fen,
+                //     })
+                //     localStorage.setItem("game_id", JSON.stringify(message.payload.gameId));
+                //     localStorage.setItem("player_color", JSON.stringify(message.payload.color));
+                //     console.log("Game initialised")
+                //     break;
                 case MOVE:
                     const move = message.payload;
                     chess.move(move);
@@ -47,11 +82,18 @@ const Game = () => {
                     console.log("Game Over");
                     console.log(message.payload.winner);
                     console.log(playerColor)
+                    localStorage.removeItem("game_id");
+                    localStorage.removeItem("player_color");
                     toast.success(`${message.payload.winner} won!!`);
                     break;
             }
         }
-    }, [socket])
+        fetchGame();
+
+        return () => {
+            if (socket) socket.close();
+        }
+    }, [socket, chess.fen(), setGame, game])
 
     if (!socket) return <div>Connecting...</div>
 
@@ -63,7 +105,7 @@ const Game = () => {
                         <ChessBoard playerColor={playerColor} chess={chess} setBoard={setBoard} socket={socket} board={board} />
                     </div>
                     <div className="col-span-2 bg-slate-900 w-full flex justify-center">
-                        <div className="pt-8">
+                        {/* <div className="pt-8">
                             {!started && <button
                                 className="px-8 py-4 bg-green-500 hover:bg-green-700 text-white font-bold rounded"
                                 onClick={() => {
@@ -74,7 +116,7 @@ const Game = () => {
                             >
                                 Play
                             </button>}
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
