@@ -41,12 +41,7 @@ const Game = () => {
                     console.log("Game Over");
                     console.log(message.payload.winner);
                     console.log(playerColor)
-                    if (playerColor === message.payload.winner) {
-                        toast.success("You Won!!");
-                    }
-                    else {
-                        toast.error("You lost");
-                    }
+                    toast.success(`${message.payload.winner} won!!`);
                     break;
             }
         }
