@@ -1,127 +1,107 @@
-import { useContext, useEffect, useState } from "react"
-import ChessBoard from "../components/ChessBoard"
-import { useSocket } from "../hooks/useSocket"
-import { Chess } from "chess.js"
-import toast from "react-hot-toast"
-import { GameContext } from "../context/GameContext"
+import { useContext, useEffect, useState, useCallback } from "react";
+import ChessBoard from "../components/ChessBoard";
+import { useSocket } from "../hooks/useSocket";
+import { Chess } from "chess.js";
+import toast from "react-hot-toast";
+import { GameContext } from "../context/GameContext";
+import { useSocketContext } from "../context/SocketContext";
 
-export const INIT_GAME = "init_game"
-export const MOVE = "move"
-export const GAME_OVER = "game_over"
+export const INIT_GAME = "init_game";
+export const MOVE = "move";
+export const GAME_OVER = "game_over";
 
 const Game = () => {
-
-    const socket = useSocket();
+    const { socket } = useSocketContext();
     const { game, setGame } = useContext(GameContext);
     const [chess, setChess] = useState(new Chess());
     const [board, setBoard] = useState(chess.board());
-    const [playerColor, setPlayerColor] = useState<'white' | 'black' | null>(null);
-    // const [started, setStarted] = useState(false);
+    const [playerColor, setPlayerColor] = useState<"white" | "black" | null>(null);
 
-    const fetchGame = async () => {
+    const fetchGame = useCallback(async () => {
         const gameIdString = localStorage.getItem("game_id");
         const storedGameId = gameIdString ? JSON.parse(gameIdString) : null;
 
         if (!game && storedGameId) {
             try {
-                const res = await fetch('http://localhost:8080/api/game', {
-                    method: 'GET',
+                const res = await fetch("http://localhost:8080/api/game", {
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
-                    credentials: 'include',
-                    body: JSON.stringify(storedGameId),
+                    body: JSON.stringify({ gameId: storedGameId }),
                 });
                 const data = await res.json();
                 setGame(data);
-                console.log("hjbsdhjkf", data);
-            }
-            catch (error) {
-                console.log("Error fetching game: ", error);
+                //setPlayerColor(JSON.parse(localStorage.getItem("player_color") || "null"));
+                const updatedChess = new Chess(data.fen);
+                setChess(updatedChess);
+                setBoard(updatedChess.board());
+            } catch (error) {
+                console.error("Error fetching game:", error);
             }
         }
-        if (game) {
-            const updatedChess = new Chess(game.fen);
-            setChess(updatedChess);
-            setBoard(updatedChess.board());
-        }
-    }
-
-    // useEffect(() => {
-    //     fetchGame();
-    // }, [])
+    }, [game, setGame]);
 
     useEffect(() => {
-        if (!socket) {
-            return;
-        }
+        if (!socket) return;
 
         socket.onmessage = (event) => {
             const message = JSON.parse(event.data);
-            console.log(message);
+            console.log("Socket Message:", message);
+
             switch (message.type) {
-                // case INIT_GAME:
-                //     setBoard(chess.board());
-                //     setPlayerColor(message.payload.color);
-                //     toast.success(`You're playing as ${message.payload.color}`);
-                //     setGame({
-                //         _id: message.payload._id,
-                //         fen: message.payload.fen,
-                //     })
-                //     localStorage.setItem("game_id", JSON.stringify(message.payload.gameId));
-                //     localStorage.setItem("player_color", JSON.stringify(message.payload.color));
-                //     console.log("Game initialised")
-                //     break;
                 case MOVE:
                     const move = message.payload;
-                    chess.move(move);
-                    setBoard(chess.board());
-                    console.log("Move Made");
+                    const updatedChess = new Chess(chess.fen());
+                    updatedChess.move(move);
+                    setChess(updatedChess);
+                    setBoard(updatedChess.board());
                     break;
+
                 case GAME_OVER:
-                    console.log("Game Over");
-                    console.log(message.payload.winner);
-                    console.log(playerColor)
                     localStorage.removeItem("game_id");
                     localStorage.removeItem("player_color");
                     toast.success(`${message.payload.winner} won!!`);
                     break;
+
+                default:
+                    break;
             }
-        }
+        };
+
         fetchGame();
 
         return () => {
-            if (socket) socket.close();
-        }
-    }, [socket, chess.fen(), setGame, game])
+            if (socket) {
+                socket.onmessage = null;
+            }
+        };
+    }, [socket, fetchGame, chess]);
 
-    if (!socket) return <div>Connecting...</div>
+    if (!socket) {
+        return <div>Connecting...</div>;
+    }
 
     return (
         <div className="justify-center flex">
             <div className="pt-8 max-w-screen-lg w-full">
                 <div className="grid grid-cols-6 gap-4 w-full">
                     <div className="col-span-4 w-full flex justify-center">
-                        <ChessBoard playerColor={playerColor} chess={chess} setBoard={setBoard} socket={socket} board={board} />
+                        <ChessBoard
+                            playerColor={JSON.parse(localStorage.getItem("player_color") || "null")}
+                            chess={chess}
+                            setBoard={setBoard}
+                            socket={socket}
+                            board={board}
+                        />
                     </div>
-                    <div className="col-span-2 bg-slate-900 w-full flex justify-center">
-                        {/* <div className="pt-8">
-                            {!started && <button
-                                className="px-8 py-4 bg-green-500 hover:bg-green-700 text-white font-bold rounded"
-                                onClick={() => {
-                                    socket.send(JSON.stringify({
-                                        type: INIT_GAME
-                                    }))
-                                }}
-                            >
-                                Play
-                            </button>}
-                        </div> */}
-                    </div>
+                    {/* <div className="col-span-2 bg-slate-900 w-full flex justify-center">
+                        
+                    </div> */}
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Game
+export default Game;

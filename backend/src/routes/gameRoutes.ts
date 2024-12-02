@@ -4,6 +4,6 @@ import { getGame } from "../controllers/gameControllers";
 const router = express.Router();
 
 router
-    .get('/', getGame);
+    .post('/', getGame);
 
 export { router };

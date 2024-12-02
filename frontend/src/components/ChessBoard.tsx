@@ -15,6 +15,8 @@ const ChessBoard = ({ chess, board, socket, setBoard, playerColor }: {
 }) => {
     const [from, setFrom] = useState<null | Square>(null);
 
+    console.log("PLayer color in game: ", playerColor)
+
     const handleSquareClick = (squareRepresentation: Square) => {
         if (!from) {
             const piece = chess.get(squareRepresentation);

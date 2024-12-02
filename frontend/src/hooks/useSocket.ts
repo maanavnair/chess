@@ -15,15 +15,14 @@ export const useSocket = () => {
 
         ws.onclose = () => {
             console.log("disconnected");
-            localStorage.removeItem("game_id");
-            localStorage.removeItem("player_color");
             setSocket(null);
         }
 
         return () => {
-            localStorage.removeItem("game_id");
-            localStorage.removeItem("player_color");
-            ws.close();
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.close();
+            }
+            setSocket(null);
         }
     }, [])
 
