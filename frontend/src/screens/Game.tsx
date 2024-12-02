@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState, useCallback } from "react";
 import ChessBoard from "../components/ChessBoard";
-import { useSocket } from "../hooks/useSocket";
 import { Chess } from "chess.js";
 import toast from "react-hot-toast";
 import { GameContext } from "../context/GameContext";
@@ -15,7 +14,6 @@ const Game = () => {
     const { game, setGame } = useContext(GameContext);
     const [chess, setChess] = useState(new Chess());
     const [board, setBoard] = useState(chess.board());
-    const [playerColor, setPlayerColor] = useState<"white" | "black" | null>(null);
 
     const fetchGame = useCallback(async () => {
         const gameIdString = localStorage.getItem("game_id");
@@ -95,9 +93,6 @@ const Game = () => {
                             board={board}
                         />
                     </div>
-                    {/* <div className="col-span-2 bg-slate-900 w-full flex justify-center">
-                        
-                    </div> */}
                 </div>
             </div>
         </div>

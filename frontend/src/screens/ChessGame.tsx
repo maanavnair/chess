@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useSocket } from "../hooks/useSocket";
 import { INIT_GAME } from "./Game";
 import { useContext, useEffect } from "react";
 import { GameContext } from "../context/GameContext";
@@ -30,15 +29,15 @@ const ChessGame = () => {
             }
         };
 
-        return () => {
-            if (socket) {
-                socket.onmessage = null;
-            }
-        };
+        // return () => {
+        //     if (socket) {
+        //         socket.onmessage = null;
+        //     }
+        // };
     }, [socket, setGame, navigate]);
 
     const initGame = () => {
-        socket?.send(
+        socket && socket.send(
             JSON.stringify({
                 type: INIT_GAME,
             })

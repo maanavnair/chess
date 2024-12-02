@@ -40,7 +40,7 @@ const Signup = () => {
                 throw new Error(data.error);
             }
             await setUser(data);
-            navigate('/');
+            navigate('/match');
         }
         catch (error) {
             toast.error("Incorrect credentials");
