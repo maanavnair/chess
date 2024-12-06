@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useContext, useEffect, useState } from "react";
 import ChessBoard from "../components/ChessBoard";
 import { Chess } from "chess.js";
 import toast from "react-hot-toast";
@@ -14,8 +14,9 @@ const Game = () => {
     const { game, setGame } = useContext(GameContext);
     const [chess, setChess] = useState(new Chess());
     const [board, setBoard] = useState(chess.board());
+    const [loading, setLoading] = useState(true);
 
-    const fetchGame = useCallback(async () => {
+    const fetchGame = async () => {
         const gameIdString = localStorage.getItem("game_id");
         const storedGameId = gameIdString ? JSON.parse(gameIdString) : null;
 
@@ -30,7 +31,6 @@ const Game = () => {
                 });
                 const data = await res.json();
                 setGame(data);
-                //setPlayerColor(JSON.parse(localStorage.getItem("player_color") || "null"));
                 const updatedChess = new Chess(data.fen);
                 setChess(updatedChess);
                 setBoard(updatedChess.board());
@@ -38,7 +38,11 @@ const Game = () => {
                 console.error("Error fetching game:", error);
             }
         }
-    }, [game, setGame]);
+    }
+
+    useEffect(() => {
+        fetchGame().finally(() => setLoading(false));
+    }, [])
 
     useEffect(() => {
         if (!socket) return;
@@ -66,15 +70,11 @@ const Game = () => {
                     break;
             }
         };
-
-        fetchGame();
-
-        return () => {
-            if (socket) {
-                socket.onmessage = null;
-            }
-        };
     }, [socket, fetchGame, chess]);
+
+    if (loading) {
+        return <div>Loading Game...</div>
+    }
 
     if (!socket) {
         return <div>Connecting...</div>;

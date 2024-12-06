@@ -19,10 +19,7 @@ export const useSocket = () => {
         }
 
         return () => {
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.close();
-            }
-            setSocket(null);
+            ws.close();
         }
     }, [])
 

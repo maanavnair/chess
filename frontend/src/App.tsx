@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import Landing from './screens/Landing'
 import Game from './screens/Game'
@@ -48,11 +48,11 @@ const App = () => {
   return (
     <div className='h-screen bg-slate-950'>
       <Routes>
-        <Route path='/' element={user ? <Navigate to='/match' /> : <Landing />} />
-        <Route path='/game' element={user ? <Game /> : <Navigate to='/login' />} />
-        <Route path='/signup' element={user ? <Navigate to='/match' /> : <Signup />} />
-        <Route path='/login' element={user ? <Navigate to='/match' /> : <Login />} />
-        <Route path='/match' element={user ? <ChessGame /> : <Navigate to='/login' />} />
+        <Route path='/' element={<Landing />} />
+        <Route path='/game' element={<Game />} />
+        <Route path='/signup' element={<Signup />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/match' element={<ChessGame />} />
       </Routes>
       <Toaster />
     </div>
